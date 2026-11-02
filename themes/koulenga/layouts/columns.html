@@ -1,0 +1,15 @@
+{{- /* Layout « columns » — port de columns.html.twig du thème Grav (6 pages : le-village,
+       le-burkina-faso, oyonnax, teeli-yan, adhesions, actions-precedentes), activé par
+       `layout: "columns"` en front matter.
+
+       C3 (plan v2) : Goldmark émet <hr> (HTML5), jamais <hr /> — un split .Content sur
+       "<hr />" ne découpe RIEN (vérifié par build réel). Découpage obligatoire via
+       findRE/replaceRE sur <hr[^>]*>, puis rendu en colonnes Spectre. */ -}}
+{{ define "content" }}
+{{- $segments := split (replaceRE "<hr[^>]*>" "@@COL@@" .Content) "@@COL@@" -}}
+<div class="container columns">
+    {{- range $i, $seg := $segments }}
+    <div class="column">{{ $seg | safeHTML }}</div>
+    {{- end }}
+</div>
+{{ end }}

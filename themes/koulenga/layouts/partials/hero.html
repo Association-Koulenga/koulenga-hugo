@@ -1,0 +1,14 @@
+{{- /* hero.html — port de partials/hero.html.twig + modular/hero.html.twig (koulenga/
+       Quark, §6.1 du plan v2) : classes « section modular-hero hero », overlay,
+       texte centré (params.hero_text), flèche #to-start pulsée (icône Line Awesome —
+       le CSS quark utilise le préfixe fa). Image de fond = 1ʳᵉ image utile du bundle
+       (§4.4/A31, résolution dans partials/hero-image.html). */ -}}
+{{- $grid := site.Params.koulenga.gridSize | default "grid-xl" -}}
+{{- $img := partial "hero-image.html" . -}}
+<section class="section modular-hero hero{{ with .Params.hero_classes }} {{ . }}{{ end }}{{ if .Params.hero_parallax }} parallax{{ end }}"{{ if $img }} style="background-image: url('{{ $img.RelPermalink }}');"{{ end }}>
+    <div class="image-overlay"></div>
+    <section class="container {{ $grid }}" style="text-align: {{ .Params.hero_align | default "center" }}">
+        {{- with .Params.hero_text }}{{ $.Page.RenderString (dict "display" "block") . }}{{ end }}
+    </section>
+    <i id="to-start" class="pulse fa fa-angle-down" aria-hidden="true"></i>
+</section>

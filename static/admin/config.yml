@@ -1,0 +1,569 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# =============================================================================
+# Sveltia CMS — configuration du back-office du site Hugo Koulenga
+# Source : plan de migration v2 (02/11/2026), §8 + annexe D.
+#
+# ⚠️ CE FICHIER EST PUBLIC (servi sur https://koulenga.com/admin/config.yml) :
+#    AUCUN SECRET ICI. Les secrets (Client Secret GitHub) vivent UNIQUEMENT
+#    en variables chiffrées du Worker Cloudflare — cf. README-SVELTIA.md et
+#    §8.4 du plan.
+#
+# ⚠️ PLACEHOLDER à renseigner à la mise en service :
+#    - <sous-domaine> dans backend.base_url (sous-domaine du Worker Cloudflare)
+#
+# NOTE : les ancres YAML (&ancre / *ancre) ne sont pas supportées nativement
+#        par Sveltia (§8.6/annexe D) — les blocs `fields` sont ici dupliqués
+#        intégralement, volontairement.
+# =============================================================================
+
+# ── Backend GitHub ─────────────────────────────────────────────────────────
+backend:
+  name: github
+  repo: Association-Koulenga/koulenga-hugo   # dépôt du site Hugo, branche master
+  branch: master
+  # ⚠️ PLACEHOLDER — URL du Worker Cloudflare « Sveltia CMS Authenticator » (§8.3).
+  # Remplacer <sous-domaine> par le sous-domaine réel du Worker déployé
+  # (cf. README-SVELTIA.md, étape 1) AVANT la mise en service.
+  base_url: https://sveltia-cms-auth.<sous-domaine>.workers.dev
+  # Dépôt PUBLIC → scope minimal (§8.3). Dépôt privé → retirer (scope repo par défaut).
+  auth_scope: public_repo
+  # Non-techniciens : connexion OAuth uniquement, pas de jetons personnels (§8.7) :
+  auth_methods: [oauth]
+
+site_url: https://koulenga.com
+
+# ── Médias ────────────────────────────────────────────────────────────────
+# Dossier global (bibliothèque d'actifs) pour les fichiers hors pages :
+media_folder: static/images
+public_folder: /images
+
+media_libraries:
+  default:
+    config:
+      max_file_size: 20971520      # 20 Mo max par upload (§8.6, garde-fou anti-LFS)
+      slugify_filename: true       # nouveaux fichiers : ASCII kebab-case (§8.6)
+      # Phase d'optimisation (option) — NOUVEAUX uploads uniquement :
+      # transformations:
+      #   raster_image: { format: webp, quality: 85, width: 2048, height: 2048 }
+
+# ── Workflow éditorial (§8.7) ──────────────────────────────────────────────
+publish_mode:
+  type: editorial_workflow
+  stages: [draft, pending_review]   # Brouillon → En revue → (Publier)
+  direct_publish: true               # « Enregistrer et publier » pour les corrections simples
+  allow_incomplete_drafts: false    # champs obligatoires exigés
+
+# ── Collections : les 18 pages en 5 file collections (§8.6) ──────────────────
+# `media_folder: ''` + `public_folder: ''` PAR FICHIER = médias colocalisés
+# dans le page bundle de chaque page (URLs /fr/<page>/<fichier> préservées).
+# Champs exposés : title, description, draft, weight, params.media_order,
+# aliases (où hérités de Grav), image_align (accueil), body (+ hints PDF).
+collections:
+
+  # 1. PAGE D'ACCUEIL (home + actualités) ───────────────────────────────────
+  - name: accueil
+    label: Page d'accueil
+    icon: home
+    files:
+      - name: home
+        label: Accueil — bandeau & bloc photos
+        file: content/fr/_index.md
+        media_folder: ''            # entry-relative : images dans content/fr/ (§8.6)
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Texte du bandeau (appel aux dons)
+            name: params.hero_text
+            widget: markdown
+            required: false
+            hint: Texte superposé au bandeau plein écran, avec le lien HelloAsso.
+          - label: Images du bandeau (1re = image de fond)
+            name: params.banner_images
+            widget: list
+            required: false
+            summary: '{{fields.image}}'
+            fields:
+              - label: Image
+                name: image
+                widget: object
+                fields:
+                  - { name: src, widget: image, required: true }
+                  - { name: alt, widget: string, required: false, hint: Description pour l'accessibilité }
+          - label: Bloc photos « Cross »
+            name: params.photo_images
+            widget: list
+            required: false
+            fields:
+              - label: Image
+                name: image
+                widget: object
+                fields:
+                  - { name: src, widget: image, required: true }
+                  - { name: alt, widget: string, required: false }
+          - label: Alignement du bloc photos
+            name: params.image_align
+            widget: select
+            options: [left, right, center]
+            default: right
+            required: false
+          - label: Classes d'affichage (ne pas modifier)
+            name: params.body_classes
+            widget: string
+            default: 'modular header-image fullwidth'
+            required: false
+      - name: actualites
+        label: Accueil — Actualités
+        # Page headless en page bundle (aligné sur la structure réelle du dépôt) :
+        file: content/fr/sections/news/index.md
+        media_folder: ''            # images dans content/fr/sections/news/ (à côté)
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+            default: Actualités
+          - label: Date de mise à jour
+            name: date
+            widget: datetime
+            type: date
+            required: false
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Chronologie des actualités (2018 → aujourd'hui). Nouvelle actualité en haut."
+      # Option si l'association garde une galerie (§8.6 ligne 5 — à trancher).
+      # Aligné sur la structure réelle du dépôt : page headless « Cross »
+      # (contenu migré de Grav, non rendue seule — servie comme module de la home).
+      # Décommenter pour l'exposer aux éditeurs :
+      # - name: photos
+      #   label: Accueil — Galerie (Cross)
+      #   file: content/fr/sections/photos/index.md
+      #   media_folder: ''
+      #   public_folder: ''
+      #   fields:
+      #     - { label: Titre, name: title, widget: string, required: true, default: Cross }
+      #     - { label: Date de mise à jour, name: date, widget: datetime, type: date, required: false }
+      #     - { label: Alignement des images, name: params.image_align, widget: select, options: [left, right, center], default: right, required: false }
+      #     - { label: Contenu, name: body, widget: markdown, required: false }
+
+  # 2. LE VILLAGE & LE PAYS ────────────────────────────────────────────────
+  - name: decouverte
+    label: Le village & le pays
+    icon: travel_explore
+    files:
+      - name: le-village
+        label: L'école - Le village
+        file: content/fr/le-village/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: Colonnes séparées par une ligne « --- » (règle horizontale).
+      - name: burkina-faso
+        label: Le Burkina Faso
+        file: content/fr/le-burkina-faso/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+
+  # 3. L'ASSOCIATION ─────────────────────────────────────────────────────────
+  - name: association
+    label: L'association
+    icon: diversity_3
+    files:
+      - name: oyonnax
+        label: Koulenga Oyonnax (France)
+        file: content/fr/association/oyonnax/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Anciennes adresses conservées (ne pas modifier)
+            name: aliases
+            widget: list
+            required: false
+            hint: Redirections Hugo (sans préfixe /fr) — migrées depuis Grav (C2).
+            field: { label: Adresse, name: alias, widget: string }
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Comptes rendus d'AG : téléverser le PDF puis lier [texte](fichier.pdf)."
+      - name: teeli-yan
+        label: Teeli Yan (Burkina)
+        file: content/fr/association/teeli-yan/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "« Nouvelles de Goudrin » : téléverser le PDF puis lier [texte](fichier.pdf)."
+      - name: adhesions
+        label: Adhésions & Dons
+        file: content/fr/association/adhesions/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Image du bulletin d'adhésion : la téléverser dans le dossier de la page puis l'insérer."
+      - name: statuts
+        label: Contact et statuts
+        file: content/fr/association/statuts/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Statuts (PDF) : téléverser le fichier puis lier [texte](fichier.pdf)."
+
+  # 4. NOS ACTIONS ──────────────────────────────────────────────────────────
+  - name: actions
+    label: Nos actions
+    icon: volunteer_activism
+    files:
+      - name: a-venir
+        label: Les actions à venir
+        file: content/fr/actions/a-venir/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Ancienne adresse /fr/actions/ (ne pas modifier)
+            name: aliases
+            widget: list
+            required: false
+            hint: Redirections Hugo (sans préfixe /fr) — migrées depuis Grav (C2).
+            field: { label: Adresse, name: alias, widget: string }
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+      - name: realisations
+        label: Réalisations (actions précédentes)
+        file: content/fr/actions/actions-precedentes/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Page très longue (10 médias) — les images se téléversent dans le dossier de la page (colocalisées)."
+      - name: presse
+        label: Dans la presse
+        file: content/fr/actions/presse/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Les 16 images de presse se téléversent dans le dossier de la page (colocalisées)."
+
+  # 5. JOURNAL & DIAPORAMA ───────────────────────────────────────────────────
+  - name: medias
+    label: Journal & diaporama
+    icon: newspaper
+    files:
+      - name: journal
+        label: Le journal de Goudrin
+        file: content/fr/journal/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des numéros se règle en réordonnant les listes d'images.
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Numéros du journal : téléverser le PDF puis lier [numéro](fichier.pdf)."
+      - name: diaporama
+        label: Diaporama
+        file: content/fr/diaporama/index.md
+        media_folder: ''
+        public_folder: ''
+        fields:
+          - label: Titre
+            name: title
+            widget: string
+            required: true
+          - label: Description (moteurs de recherche)
+            name: description
+            widget: string
+            required: false
+          - label: Brouillon (non publié)
+            name: draft
+            widget: boolean
+            default: false
+            required: false
+          - label: Poids / ordre d'affichage
+            name: weight
+            widget: number
+            required: false
+            hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
+          - label: Ordre des médias (hérité de Grav — ne pas modifier)
+            name: params.media_order
+            widget: string
+            required: false
+            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Contenu
+            name: body
+            widget: markdown
+            required: false
+            hint: "Les 13 images du diaporama se téléversent dans le dossier de la page (colocalisées)."
+
+  # 6. BIBLIOTHÈQUE DE DOCUMENTS (option, §8.6) ──────────────────────────────
+  # Décommenter si l'association veut une bibliothèque de PDF globale :
+  # asset_collections:
+  #   - name: documents
+  #     label: Documents PDF globaux
+  #     icon: description
+  #     media_folder: /static/documents
+  #     public_folder: /documents

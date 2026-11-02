@@ -1,0 +1,24 @@
+{{- /* render-image.html (annexe A du plan v2, adaptée au périmètre réel) :
+       1. image d'un page bundle → servie avec width/height (anti-CLS),
+          loading="lazy", decoding="async" (vérifié par build) ;
+       2. image relative d'une page SANS bundle (ex. la page headless
+          content/fr/sections/news.md du plan, médias posés à côté du fichier) →
+          résolue contre le dossier du fichier source via relLangURL :
+          URL /fr/<dossier>/<fichier>, identique à Grav (RelPermalink est VIDE
+          pour une page headless, vérifié — d'où .Page.File comme référence) ;
+       3. URL absolue / externe → telle quelle.
+       Exception hero (A10) : l'image de fond du hero est préchargée dans le head
+       de la home (partials/head.html), pas concernée par ce hook. */ -}}
+{{- $u := urls.Parse .Destination -}}
+{{- $alt := plainify .Text -}}
+{{- $res := "" -}}
+{{- if not $u.IsAbs }}{{ with .Page.Resources.GetMatch $u.Path }}{{ $res = . }}{{ end }}{{ end -}}
+{{- if $res -}}
+<img src="{{ $res.RelPermalink }}" alt="{{ $alt }}"{{ with .Title }} title="{{ . }}"{{ end }} width="{{ $res.Width }}" height="{{ $res.Height }}" loading="lazy" decoding="async">
+{{- else if not $u.IsAbs -}}
+{{- $src := $u.Path -}}
+{{- with .Page.File }}{{ $src = relLangURL (path.Join (path.Dir .Path) $u.Path) }}{{ end -}}
+<img src="{{ $src }}" alt="{{ $alt }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">
+{{- else -}}
+<img src="{{ .Destination }}" alt="{{ $alt }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async">
+{{- end -}}

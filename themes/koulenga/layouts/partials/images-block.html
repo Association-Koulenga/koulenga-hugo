@@ -1,0 +1,45 @@
+{{- /* images-block.html — port de modular/image.html.twig (bloc photos « Cross » de
+       la home, §6.1 du plan v2). Sources, dans cet ordre :
+         1. params.photo_images : liste d'images du CMS (objet image.src/image.alt,
+                                   accepté aussi à plat src/alt, ou chemin seul) ;
+         2. images du page bundle (fallback).
+       Alignement : params.image_align (left/right/center, défaut left comme le
+       module _banner du site Grav) — classe align-{{ … }} comme en Grav. */ -}}
+{{- $grid := site.Params.koulenga.gridSize | default "grid-xl" -}}
+{{- $align := .Params.image_align | default "left" -}}
+{{- $images := slice -}}
+{{- with .Params.photo_images -}}
+    {{- range . -}}
+        {{- $src := "" -}}{{- $alt := "" -}}
+        {{- if reflect.IsMap . -}}
+            {{- with index . "image" -}}
+                {{- with index . "src" }}{{ $src = string . }}{{ end -}}
+                {{- with index . "alt" }}{{ $alt = string . }}{{ end -}}
+            {{- end -}}
+            {{- if not $src -}}
+                {{- with index . "src" }}{{ $src = string . }}{{ end -}}
+                {{- with index . "alt" }}{{ $alt = string . }}{{ end -}}
+            {{- end -}}
+        {{- else if reflect.IsString . -}}
+            {{- $src = string . -}}
+        {{- end -}}
+        {{- with $src -}}
+            {{- $url := . -}}
+            {{- $res := "" -}}
+            {{- with $.Resources.GetMatch . }}{{ $url = .RelPermalink }}{{ $res = . }}{{ end -}}
+            {{- $images = $images | append (dict "src" $url "alt" $alt "res" $res) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- if not $images -}}
+    {{- range .Resources.ByType "image" -}}
+        {{- $images = $images | append (dict "src" .RelPermalink "alt" .Title "res" .) -}}
+    {{- end -}}
+{{- end -}}
+<section id="modular-images-{{ anchorize .Title }}" class="section{{ with .Params.class }} {{ . }}{{ end }}">
+    <section class="container {{ $grid }}">
+        {{- range $images }}
+        <img src="{{ .src }}" alt="{{ .alt }}" class="align-{{ $align }}"{{ with .res }} width="{{ .Width }}" height="{{ .Height }}"{{ end }} loading="lazy" decoding="async">
+        {{- end }}
+    </section>
+</section>

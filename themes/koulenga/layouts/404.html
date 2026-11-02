@@ -1,0 +1,12 @@
+{{- /* Page 404 (port de error.html.twig de Quark). Générée sous /fr/404.html avec
+       defaultContentLanguageInSubdir (vérifié) : la CI copie public/fr/404.html vers
+       public/404.html pour GitHub Pages (§10.3/A6). */ -}}
+{{ define "content" }}
+    <div id="error">
+        <div>
+            <h1>{{ i18n "error_404" }}</h1>
+            <p>{{ i18n "error_404_message" }}</p>
+            <p><a href="{{ site.Home.RelPermalink }}">{{ i18n "error_back_home" }}</a></p>
+        </div>
+    </div>
+{{ end }}

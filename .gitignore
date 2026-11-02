@@ -1,0 +1,8 @@
+# Artefacts de build Hugo (§10.4 du plan v2)
+public/
+resources/_gen/
+.hugo_build.lock
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,5 @@
+{{- /* render-link.html (annexe A du plan v2, code vérifié par build réel) :
+       les liens externes (http/https) s'ouvrent dans un nouvel onglet avec
+       rel="noopener noreferrer" (sécurité, A8) — jamais de target="_blank" sans rel. */ -}}
+{{- $isExt := or (strings.HasPrefix .Destination "http") (strings.HasPrefix .Destination "https") -}}
+<a href="{{ .Destination }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $isExt }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .Text | safeHTML }}</a>

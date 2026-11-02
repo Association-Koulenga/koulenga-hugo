@@ -1,0 +1,13 @@
+{{- /* text-block.html — port de modular/text.html.twig (bloc texte de la home :
+       « Actualités », galerie éventuelle, §4.4 du plan v2) : section + conteneur
+       grille, contenu en col-6 col-md-12 comme en Grav. */ -}}
+{{- $grid := site.Params.koulenga.gridSize | default "grid-xl" -}}
+<section id="modular-text-{{ anchorize .Title }}" class="section{{ with .Params.class }} {{ . }}{{ end }}">
+    <section class="container {{ $grid }}">
+        <div class="columns">
+            <div class="column col-6 col-md-12">
+                {{- .Content -}}
+            </div>
+        </div>
+    </section>
+</section>

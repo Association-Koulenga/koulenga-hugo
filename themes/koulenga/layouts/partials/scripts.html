@@ -1,0 +1,7 @@
+{{- /* scripts.html — JS du thème, empreinté (cache busting, §6.7/A26) :
+       assets/js/site.js est le portage vanilla (sans jQuery) de js/site.js +
+       js/jquery.treemenu.js de Quark (§6.3). Chargé en defer : le DOM est prêt. */ -}}
+{{- with resources.Get "js/site.js" }}
+{{- $js := . | minify | fingerprint }}
+<script defer src="{{ $js.RelPermalink }}"></script>
+{{- end }}

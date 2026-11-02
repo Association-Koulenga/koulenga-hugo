@@ -1,0 +1,23 @@
+# themes/koulenga/i18n/fr.yaml — chaînes d'interface du thème (§6.4/§7 du plan v2 :
+# TOUTES les chaînes d'interface vivent ici, y compris les libellés du skip-link et du
+# menu burger — jamais de chaîne en dur dans les templates).
+skip_to_content:
+  other: "Aller au contenu"
+menu_toggle:
+  other: "Ouvrir le menu"
+menu_close:
+  other: "Fermer le menu"
+tree_toggle:
+  other: "Déplier / replier le sous-menu"
+footer_powered_by:
+  other: "Site statique propulsé par"
+footer_contact:
+  other: "Contact et statuts"
+error_heading:
+  other: "Erreur"
+error_404:
+  other: "Erreur 404"
+error_404_message:
+  other: "La page demandée n’existe pas ou a été déplacée."
+error_back_home:
+  other: "Retour à l’accueil"

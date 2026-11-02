@@ -1,0 +1,19 @@
+{{- /* Surcharge du template d'alias d'Hugo (A15, §5.2 du plan v2) : la page d'alias
+       embarquée v0.169 ne contient plus de <meta name="robots" content="noindex"> —
+       on l'ajoute ici pour que les pages de redirection restent hors des index.
+       Les aliases sont écrits SANS préfixe /fr en front matter (C2) : Hugo les préfixe
+       automatiquement (aliases: ["/association"] → /fr/association/index.html, vérifié).
+       Contexte : .Permalink = URL cible de la redirection. */ -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale }}">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ .Permalink }}</title>
+    <link rel="canonical" href="{{ .Permalink }}">
+    <meta name="robots" content="noindex">
+    <meta http-equiv="refresh" content="0; url={{ .Permalink }}">
+  </head>
+  <body>
+    <a href="{{ .Permalink }}">{{ .Permalink }}</a>
+  </body>
+</html>

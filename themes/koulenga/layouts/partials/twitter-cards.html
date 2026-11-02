@@ -1,0 +1,13 @@
+{{- /* twitter-cards.html — Twitter Cards (§6.5 du plan v2). Contexte (dict) :
+       page, description. twitter:card = summary_large_image si params.ogImage
+       existe, summary sinon ; image via params.ogImage (A13). */ -}}
+{{- $page := .page -}}
+{{- $desc := .description -}}
+<meta name="twitter:card" content="{{ if site.Params.ogImage }}summary_large_image{{ else }}summary{{ end }}">
+<meta name="twitter:title" content="{{ if $page.IsHome }}{{ site.Title }}{{ else }}{{ $page.Title }}{{ end }}">
+{{- with $desc }}
+<meta name="twitter:description" content="{{ . }}">
+{{- end }}
+{{- with site.Params.ogImage }}
+<meta name="twitter:image" content="{{ . | absURL }}">
+{{- end }}

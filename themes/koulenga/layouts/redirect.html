@@ -1,0 +1,33 @@
+{{- /* redirect.html — layout de redirection (décision A7-a, §4.6 du plan v2).
+       Rend une page de redirection portable (GitHub Pages comme nginx) :
+       meta-refresh 0 s vers la cible + canonical vers la cible + noindex —
+       jamais de 301 serveur en match préfixe (elle masquerait aussi les PDF,
+       cf. A7). Les PDF du bundle restent publiés à /fr/<page>/<fichier>.
+
+       Usage (front matter du branch bundle, ex. content/fr/association/_index.md) :
+
+           title: L'association
+           layout: redirect
+           params:
+             redirect: /association/oyonnax   # chemin logique SANS préfixe /fr
+
+       Sans params.redirect, la cible est la première page enfant du bundle.
+       NOTE : ne PAS cumuler ce layout avec un `aliases` pointant la même URL —
+       depuis Hugo 0.146 les sections sans _index.md sont rendues et entreraient
+       en collision avec la page d'alias (vérifié par build). */ -}}
+{{- $target := "" -}}
+{{- with .Params.redirect }}{{ with site.GetPage . }}{{ $target = .Permalink }}{{ else }}{{ $target = absLangURL (printf "%s/" .) }}{{ end }}{{ end -}}
+{{- if not $target }}{{ with index .Pages 0 }}{{ $target = .Permalink }}{{ end }}{{ end -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale }}">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ .Title }}</title>
+    <link rel="canonical" href="{{ $target }}">
+    <meta name="robots" content="noindex">
+    <meta http-equiv="refresh" content="0; url={{ $target }}">
+  </head>
+  <body>
+    <p><a href="{{ $target }}">{{ .Title }}</a></p>
+  </body>
+</html>

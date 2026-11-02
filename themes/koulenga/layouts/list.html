@@ -1,0 +1,12 @@
+{{- /* Page de section (ex. /fr/association/, /fr/actions/) : contenu éventuel du
+       branch bundle + liste des pages enfants. */ -}}
+{{ define "content" }}
+    {{ .Content }}
+    {{- with .Pages }}
+    <ul>
+        {{- range . }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+        {{- end }}
+    </ul>
+    {{ end }}
+{{ end }}

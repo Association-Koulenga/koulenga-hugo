@@ -1,0 +1,35 @@
+{{- /* jsonld.html — structured data (§6.5 du plan v2) : NGO/Organization sur toutes
+       les pages (name, url, logo, sameAs vers HelloAsso, contactPoint avec
+       l'adresse postale de la page Statuts — params.address, coordonnées réelles du
+       site Grav) + BreadcrumbList sur les pages intérieures (partials/breadcrumbs.html).
+       Le JSON est construit par dict + jsonify, puis marqué safeJS : dans le contexte
+       <script> de Go html/template, une sortie non marquée serait ré-échappée en
+       chaîne JS (double encodage, vérifié par build réel). */ -}}
+{{- $logo := "img/logo.png" | absURL -}}
+{{- $address := dict
+    "@type" "PostalAddress"
+    "streetAddress" site.Params.address.streetAddress
+    "addressLocality" site.Params.address.addressLocality
+    "postalCode" site.Params.address.postalCode
+    "addressCountry" site.Params.address.addressCountry
+-}}
+{{- $org := dict
+    "@context" "https://schema.org"
+    "@type" "NGO"
+    "name" site.Title
+    "url" site.Home.Permalink
+    "logo" $logo
+    "sameAs" (slice "https://www.helloasso.com/associations/koulenga")
+    "contactPoint" (dict
+        "@type" "ContactPoint"
+        "telephone" "+33 4 74 77 41 82"
+        "email" "koulenga@yahoo.fr"
+        "address" $address
+    )
+-}}
+<script type="application/ld+json">{{ $org | jsonify | safeJS }}</script>
+{{- if not .IsHome }}
+{{- with partial "breadcrumbs.html" . }}
+<script type="application/ld+json">{{ . | jsonify | safeJS }}</script>
+{{- end }}
+{{- end }}

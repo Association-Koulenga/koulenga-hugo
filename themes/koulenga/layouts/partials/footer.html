@@ -1,0 +1,11 @@
+{{- /* footer.html — sticky footer : remplace la mention « Grav … Trilby Media » de
+       Quark (§6.4 du plan) par « Association Koulenga — Site statique propulsé par
+       Hugo » + lien vers la page Contact et statuts. */ -}}
+<section id="footer" class="section bg-gray">
+    <section class="container {{ site.Params.koulenga.gridSize | default "grid-xl" }}">
+        <p>
+            {{- with site.Params.footerText }}{{ . }}{{ else }}Association Koulenga — {{ i18n "footer_powered_by" }} <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">Hugo</a>{{ end }}
+            {{- with site.GetPage "/association/statuts" }} — <a href="{{ .RelPermalink }}">{{ i18n "footer_contact" }}</a>{{ end }}.
+        </p>
+    </section>
+</section>

@@ -1,0 +1,5 @@
+{{- /* robots.txt (§6.5/C4 du plan v2) : le robots.txt généré sans template ne contient
+       PAS de ligne « Sitemap: » (vérifié) — ce template l'ajoute. Le sitemap racine
+       est un sitemapindex pointant vers /fr/sitemap.xml : c'est lui qu'on référence. */ -}}
+User-agent: *
+Sitemap: {{ "sitemap.xml" | absURL }}

@@ -1,0 +1,34 @@
+{{- /* head.html — <head> complet « production ready » (§6.5, A11–A15 du plan v2) :
+       title, description (front matter → fallback params.description), canonical,
+       Open Graph, Twitter Cards, JSON-LD, robots, RSS, favicon, preload hero (A10)
+       et police, CSS compilés Grav chargés via resources.Get + fingerprint (§6.2/A26). */ -}}
+{{- $desc := "" -}}
+{{- if .Description }}{{ $desc = .Description }}{{ else }}{{ $desc = site.Params.description }}{{ end -}}
+<meta charset="utf-8">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title | default (i18n "error_heading") }} | {{ site.Title }}{{ end }}</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{{ with $desc }}<meta name="description" content="{{ . }}">{{ end }}
+{{ if .Params.noindex }}<meta name="robots" content="noindex, nofollow">{{ end }}
+<link rel="canonical" href="{{ .Permalink }}">
+{{ partial "opengraph.html" (dict "page" . "description" $desc) }}
+{{ partial "twitter-cards.html" (dict "page" . "description" $desc) }}
+{{ partial "jsonld.html" . }}
+{{- with .OutputFormats.Get "rss" }}
+<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
+{{- end }}
+<link rel="icon" type="image/png" href="{{ "img/favicon.png" | relURL }}">
+{{- /* A10 : le hero est la page LCP — preload de l'image de fond sur la home. */ -}}
+{{- if .IsHome }}{{ with partial "hero-image.html" . }}
+<link rel="preload" as="image" href="{{ .RelPermalink }}" fetchpriority="high">
+{{- end }}{{ end }}
+<link rel="preload" href="{{ "fonts/line-awesome.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+{{- /* CSS compilés du thème Grav, repris tels quels (phase 1 fidélité, §6.2),
+       minifiés + empreintés (cache busting GitHub Pages, A26). Ordre = Grav :
+       spectre → spectre-icons → theme (incl. _custom.scss) → custom → line-awesome. */ -}}
+{{- range $file := slice "css/spectre.css" "css/spectre-icons.css" "css/theme.css" "css/custom.css" "css/line-awesome.min.css" "css/koulenga.css" }}
+{{- with resources.Get $file }}
+{{- $css := . | resources.Minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}">
+{{- end }}
+{{- end }}

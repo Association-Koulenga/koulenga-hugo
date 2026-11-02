@@ -1,0 +1,31 @@
+{{- /* hero-image.html — résolution de l'image de fond du hero (§4.4/A31 du plan v2).
+       Un SEUL mécanisme, dans cet ordre :
+         1. params.hero_image      : nom de la ressource image du bundle ;
+         2. params.banner_images  : 1ʳᵉ entrée de la liste (src + alt) — format des
+                                     listes d'images du CMS (objet image.src/image.alt),
+                                     accepté aussi à plat (src/alt) ou chemin seul ;
+         3. 1ʳᵉ image du page bundle (fallback, §2.6.2 : garder la 1ʳᵉ image utile).
+       Rend la ressource (image), ou "" si aucune image. */ -}}
+{{- $img := "" -}}
+{{- with .Params.hero_image }}{{ with $.Resources.GetMatch . }}{{ $img = . }}{{ end }}{{ end -}}
+{{- if not $img -}}
+{{- with .Params.banner_images -}}
+{{- $e := index . 0 -}}
+{{- $src := "" -}}
+{{- if reflect.IsMap $e -}}
+    {{- with index $e "image" -}}
+        {{- with index . "src" }}{{ $src = string . }}{{ end -}}
+    {{- end -}}
+    {{- if not $src -}}
+        {{- with index $e "src" }}{{ $src = string . }}{{ end -}}
+    {{- end -}}
+{{- else if reflect.IsString $e -}}
+    {{- $src = string $e -}}
+{{- end -}}
+{{- with $src }}{{ with $.Resources.GetMatch . }}{{ $img = . }}{{ end }}{{ end -}}
+{{- end -}}
+{{- end -}}
+{{- if not $img -}}
+{{- with .Resources.ByType "image" }}{{ $img = index . 0 }}{{ end -}}
+{{- end -}}
+{{- return $img -}}

@@ -1,0 +1,39 @@
+{{- /* Page d'accueil (port de modular.html.twig du thème Grav, §4.4/§6.1 du plan v2) :
+       hero plein écran (partials/hero.html), contenu propre de la home (§2.6.1 :
+       texte « Courir et sourire pour Koulenga » + image), puis la grille des
+       modules dans l'ordre Grav _photo → _news → _gallery : bloc photos en col-5,
+       actualités (+ galerie si présente) dans des col-12 imbriquées en col-7.
+       La page « Actualités » est headless (content/fr/sections/news.md,
+       build: {render: false, list: never}) et rendue par le partial text-block. */ -}}
+{{ define "hero" }}
+    {{ partial "hero.html" . }}
+{{ end }}
+{{ define "body" }}
+    {{- $grid := site.Params.koulenga.gridSize | default "grid-xl" -}}
+    {{- with .Content }}
+    <section id="body-wrapper" class="section">
+        <section class="container {{ $grid }}">
+            {{ . }}
+        </section>
+    </section>
+    {{ end }}
+    <div class="container columns col-gapless">
+        <div class="column col-5">
+            {{ partial "images-block.html" . }}
+        </div>
+        <div class="column col-7">
+            <div class="columns col-gapless">
+                {{- with site.GetPage "/sections/news" }}
+                <div class="column col-12">
+                    {{ partial "text-block.html" . }}
+                </div>
+                {{ end }}
+                {{- with site.GetPage "/sections/galerie" }}
+                <div class="column col-12">
+                    {{ partial "text-block.html" . }}
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+{{ end }}

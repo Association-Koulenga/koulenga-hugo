@@ -1,0 +1,18 @@
+{{- /* breadcrumbs.html — fil d'Ariane JSON-LD (BreadcrumbList, §6.5/A20 du plan v2).
+       Rend un dict BreadcrumbList (Accueil → … → page courante) à consommer via
+       `{{ with partial "breadcrumbs.html" . }}` (return : sans lui, le partial
+       rendrait la valeur au format Go « map[…] », vérifié), ou rien si le fil ne
+       comporte qu'un élément (home). Pas de fil visible : le site Grav n'en
+       affichait pas. */ -}}
+{{- $crumbs := slice -}}
+{{- range .Ancestors.Reverse -}}
+    {{- if .IsHome -}}
+        {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" (add (len $crumbs) 1) "name" "Accueil" "item" .Permalink) -}}
+    {{- else -}}
+        {{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" (add (len $crumbs) 1) "name" .Title "item" .Permalink) -}}
+    {{- end -}}
+{{- end -}}
+{{- $crumbs = $crumbs | append (dict "@type" "ListItem" "position" (add (len $crumbs) 1) "name" .Title "item" .Permalink) -}}
+{{- if gt (len $crumbs) 1 -}}
+{{- return (dict "@context" "https://schema.org" "@type" "BreadcrumbList" "itemListElement" $crumbs) -}}
+{{- end -}}

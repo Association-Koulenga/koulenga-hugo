@@ -1,0 +1,15 @@
+# Thème Hugo « koulenga » — portage du thème Grav koulenga (surcouche de Quark 2.1.6,
+# Spectre.css), charte terracotta #996a51 / texte blanc, header fixe transparent,
+# sticky footer, menu burger mobile plein écran (§2.3 et §6 du plan v2).
+name = "koulenga"
+license = "MIT"
+licenselink = "https://github.com/Association-Koulenga/koulenga-hugo/blob/master/themes/koulenga/LICENSE"
+description = "Thème du site de l'Association Koulenga (koulenga.com) : fond terracotta #996a51, texte blanc, framework Spectre, icônes Line Awesome, hero plein écran, sticky footer, menu burger mobile accessible (JS vanilla, sans jQuery)."
+homepage = "https://koulenga.com/"
+tags = ["association", "spectre", "quark", "grav", "i18n", "accessible"]
+features = ["menu récursif", "hero", "layout columns", "render hooks", "SEO complet"]
+min_version = "0.146.0"
+
+[author]
+name = "Association Koulenga"
+homepage = "https://koulenga.com/"

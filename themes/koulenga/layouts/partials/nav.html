@@ -1,0 +1,27 @@
+{{- /* nav.html — navigation récursive : port de partials/navigation.html.twig +
+       macros/nav_loop de Quark sur les menus Hugo (.Site.Menus.main, §6.1 du plan).
+
+       Contexte (dict) :
+         menu    : entrées de menu à parcourir (.Children pour la récursion)
+         page    : la page courante (pour IsMenuCurrent/HasMenuCurrent)
+         ulclass : classe du <ul> racine (ex. "tree" pour le menu mobile)
+
+       État actif : class="active" si la page est la cible (IsMenuCurrent) ou un
+       descendant (HasMenuCurrent) ; aria-current="page" uniquement sur l'entrée
+       courante. Les entrées de redirection ne sont pas au menu : le menu pointe
+       directement vers oyonnax et a-venir (§9). */ -}}
+{{- $page := .page -}}
+{{- $ulclass := "" -}}
+{{- with .ulclass }}{{ $ulclass = . }}{{ end -}}
+<ul{{ with $ulclass }} class="{{ . }}"{{ end }}>
+    {{- range .menu }}
+    {{- $isCurrent := $page.IsMenuCurrent "main" . -}}
+    {{- $isChildCurrent := $page.HasMenuCurrent "main" . -}}
+    <li>
+        <a href="{{ .URL }}"{{ if or $isCurrent $isChildCurrent }} class="active"{{ end }}{{ if $isCurrent }} aria-current="page"{{ end }}>{{ .Name }}</a>
+        {{- with .Children }}
+        {{- partial "nav.html" (dict "menu" . "page" $page) }}
+        {{- end }}
+    </li>
+    {{- end }}
+</ul>

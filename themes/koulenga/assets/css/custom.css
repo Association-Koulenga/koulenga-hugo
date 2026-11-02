@@ -1,0 +1,20 @@
+body {
+    background: #996a51; /* #db885b; #bf5f2c; */
+    color: #fff;
+}
+
+.logo img {
+    max-width: 80px;
+    max-height: 80px;
+    margin-left: 2rem;
+    margin-top: 0.5rem;
+}
+
+.mobile-logo {
+    max-width: 50px;
+    max-height: 50px;
+}
+
+#start {
+    padding-top: 5rem;
+}

@@ -1,0 +1,50 @@
+/*
+ * themes/koulenga/assets/css/koulenga.css — compléments du portage Hugo.
+ *
+ * Les CSS compilés du thème Grav (spectre.css, spectre-icons.css, theme.css,
+ * custom.css, line-awesome.min.css — charte #996a51, texte blanc) sont repris
+ * TELS QUELS (phase 1 fidélité, §6.2 du plan v2). Ce fichier ne contient que les
+ * AJOUTS propres au portage : accessibilité (§6.4) et images fluides.
+ *
+ * Chargé en dernier par layouts/partials/head.html, après custom.css.
+ */
+
+/* Skip-link « Aller au contenu » : masqué hors focus, visible au focus clavier */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 2000;
+  background: #fff;
+  color: #996a51;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  border-radius: 0.2rem;
+}
+.skip-link:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* Focus clavier visible (navigation au clavier) */
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Images du contenu migré : fluides (hero = background CSS, non concerné) */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* prefers-reduced-motion : désactive la pulsation de la flèche #to-start (§6.4) */
+@media (prefers-reduced-motion: reduce) {
+  .pulse,
+  #to-start {
+    animation: none !important;
+    -webkit-animation: none !important;
+  }
+}

@@ -1,0 +1,37 @@
+{{- $k := site.Params.koulenga -}}
+{{- /* Classes du <body> : port de partials/base.html.twig de Grav
+       (body_class(['header-fixed', 'header-animated', 'header-dark',
+       'header-transparent', 'sticky-footer']) + params.body_classes de la page). */ -}}
+{{- $bodyClasses := slice -}}
+{{- if default true $k.headerFixed }}{{ $bodyClasses = $bodyClasses | append "header-fixed" }}{{ end -}}
+{{- if default true $k.headerAnimated }}{{ $bodyClasses = $bodyClasses | append "header-animated" }}{{ end -}}
+{{- if default true $k.headerDark }}{{ $bodyClasses = $bodyClasses | append "header-dark" }}{{ end -}}
+{{- if default true $k.headerTransparent }}{{ $bodyClasses = $bodyClasses | append "header-transparent" }}{{ end -}}
+{{- if default true $k.stickyFooter }}{{ $bodyClasses = $bodyClasses | append "sticky-footer" }}{{ end -}}
+{{- with .Params.body_classes }}{{ $bodyClasses = $bodyClasses | append . }}{{ end -}}
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale }}" data-tree-toggle-label="{{ i18n "tree_toggle" }}">
+<head>
+    {{ partial "head.html" . }}
+</head>
+<body id="top" class="{{ delimit $bodyClasses " " }}">
+    {{- /* Skip-link : premier élément du <body>, cible #start (§6.4). */ -}}
+    <a class="skip-link" href="#start">{{ i18n "skip_to_content" }}</a>
+    <div id="page-wrapper">
+        {{ partial "header.html" . }}
+        {{ block "hero" . }}{{ end }}
+        <section id="start" tabindex="-1">
+            {{ block "body" . }}
+                <section id="body-wrapper" class="section">
+                    <section class="container {{ site.Params.koulenga.gridSize | default "grid-xl" }}">
+                        {{ block "content" . }}{{ end }}
+                    </section>
+                </section>
+            {{ end }}
+        </section>
+    </div>
+    {{ partial "footer.html" . }}
+    {{ partial "mobile-menu.html" . }}
+    {{ partial "scripts.html" . }}
+</body>
+</html>

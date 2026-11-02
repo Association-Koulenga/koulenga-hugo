@@ -1,0 +1,63 @@
+# =============================================================================
+# Hugo — site de l'Association Koulenga (koulenga.com)
+# Configuration corrigée du plan v2 (§9) : anomalies C1–C5 intégrées, chaque point
+# « vérifié » l'a été par builds réels sous Hugo v0.169.0+extended.
+# =============================================================================
+
+baseURL = "https://koulenga.com/"
+title = "Association Koulenga"           # corrige le bug « | Grav » de production (§2.1)
+theme = "koulenga"
+defaultContentLanguage = "fr"
+defaultContentLanguageInSubdir = true    # conserve les URLs /fr/... de la production (§5.1)
+enableRobotsTXT = true                   # + themes/koulenga/layouts/robots.txt avec Sitemap: (§6.5, C4)
+timeout = "120s"                         # 140 médias + pipeline d'images ; défaut 60 s (§6.7)
+disableKinds = ["taxonomy", "term"]      # C4 : UNIQUEMENT taxonomy+term — sitemap, RSS et 404 restent activés
+
+[languages.fr]
+locale = "fr-FR"                         # C5 : languageCode est déprécié depuis 0.158
+label = "Français"                       # v0.169 : languageName est déprécié (→ label, même usage)
+weight = 10
+contentDir = "content/fr"                 # C1 : OBLIGATOIRE — sans ceci, URLs /fr/fr/... (vérifié par build)
+
+# Menus : AUCUN bloc [[menus.main]] ici — l'arbre complet (avec enfants) est
+# porté par le front matter des pages (menu.main + identifier/parent/weight),
+# une seule source de vérité. Le définir ici ET en front matter faisait sortir
+# chaque entrée 2 fois dans la nav (bug de doublon, corrigé — QA du 02/11/2026).
+# Ordre = menu actuel : Accueil (10) → L'école - Le village (20) → Le Burkina
+# Faso (30) → L'association (40, sur oyonnax) → Actions (50, sur a-venir) →
+# Le journal de Goudrin (60) → Diaporama (70) ; enfants : Teeli Yan, Adhésions,
+# Statuts (parent: association) ; Réalisations, Presse (parent: actions).
+# Les entrées de redirection ne sont PAS au menu : « L'association » pointe
+# directement vers oyonnax, « Actions » vers a-venir (§6.1).
+
+[params]
+# Fallback de la meta description (chaque page porte la sienne en front matter, A11)
+description = "Association Koulenga : solidarité entre Oyonnax (France) et le village de Koulenga au Burkina Faso — école, actions éducatives, adhésions et dons."
+# Image Open Graph ≥ 1200×630 à créer avant la bascule (A13) — le logo 80×80 est
+# inutilisable pour og:image. Une fois le fichier posé (ex. static/images/) :
+# ogImage = "/images/og-koulenga.jpg"
+footerText = "Association Koulenga — Site statique propulsé par Hugo."
+
+# Adresse postale de la page « Contact et statuts » (structured data JSON-LD, §6.5)
+[params.address]
+streetAddress = "368 rue principale - Chatonnax"
+addressLocality = "Oyonnax"
+postalCode = "01100"
+addressCountry = "FR"
+
+# Portage de themes/koulenga/koulenga.yaml (Grav) — paramètres de la charte (§6.4)
+[params.koulenga]
+gridSize = "grid-xl"
+headerFixed = true
+headerAnimated = true
+headerDark = true
+headerTransparent = true
+stickyFooter = true
+
+[markup]
+[markup.goldmark]
+[markup.goldmark.parser]
+# Images hors <p> : indispensable au découpage en colonnes du layout « columns » (vérifié)
+wrapStandAloneImageWithinParagraph = false
+# renderer.unsafe reste à false (défaut) : le HTML brut du contenu est omis avec un
+# warning, jamais rendu (A8). Le contenu actuel n'en contient pas de structurel.

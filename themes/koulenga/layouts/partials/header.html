@@ -1,0 +1,33 @@
+{{- /* header.html — port du bloc header de partials/base.html.twig (koulenga/Quark) :
+       logo à gauche (params.koulenga.gridSize), navigation à droite (partials/nav.html
+       récursif sur .Site.Menus.main), burger mobile accessible en dessous. */ -}}
+<section id="header" class="section">
+    <section class="container {{ site.Params.koulenga.gridSize | default "grid-xl" }}">
+        <nav class="navbar">
+            <section class="navbar-section logo">
+                <a href="{{ site.Home.RelPermalink }}" class="navbar-brand mr-10">
+                    <img src="{{ "img/logo.png" | relURL }}" alt="{{ site.Title }}"/>
+                </a>
+            </section>
+            <section class="navbar-section">
+                <nav class="dropmenu animated">
+                    {{ partial "nav.html" (dict "menu" site.Menus.main "page" .) }}
+                </nav>
+            </section>
+        </nav>
+    </section>
+</section>
+{{- /* Burger mobile plein écran (§6.3/§6.4) : les libellés viennent d'i18n (jamais en
+       dur) ; role="button" + tabindex car Spectre style l'élément <button> ; l'état
+       ARIA et la gestion du focus/Escape sont portés par assets/js/site.js. */ -}}
+<div class="mobile-menu">
+    <div class="button_container" id="toggle" role="button" tabindex="0"
+         aria-expanded="false" aria-controls="overlay"
+         aria-label="{{ i18n "menu_toggle" }}"
+         data-menu-open="{{ i18n "menu_toggle" }}"
+         data-menu-close="{{ i18n "menu_close" }}">
+        <span class="top"></span>
+        <span class="middle"></span>
+        <span class="bottom"></span>
+    </div>
+</div>
