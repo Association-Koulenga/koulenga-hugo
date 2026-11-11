@@ -3,13 +3,13 @@
 # Sveltia CMS — configuration du back-office du site Hugo Koulenga
 # Source : plan de migration v2 (02/11/2026), §8 + annexe D.
 #
-# ⚠️ CE FICHIER EST PUBLIC (servi sur https://koulenga.com/admin/config.yml) :
+# ⚠️ CE FICHIER EST PUBLIC (servi sur https://dev.koulenga.com/admin/config.yml) :
 #    AUCUN SECRET ICI. Les secrets (Client Secret GitHub) vivent UNIQUEMENT
 #    en variables chiffrées du Worker Cloudflare — cf. README-SVELTIA.md et
 #    §8.4 du plan.
 #
-# ⚠️ PLACEHOLDER à renseigner à la mise en service :
-#    - <sous-domaine> dans backend.base_url (sous-domaine du Worker Cloudflare)
+# URL publique du Worker Cloudflare « Sveltia CMS Authenticator » :
+# https://sveltia-cms-auth.koulenga.workers.dev
 #
 # NOTE : les ancres YAML (&ancre / *ancre) ne sont pas supportées nativement
 #        par Sveltia (§8.6/annexe D) — les blocs `fields` sont ici dupliqués
@@ -21,16 +21,14 @@ backend:
   name: github
   repo: Association-Koulenga/koulenga-hugo   # dépôt du site Hugo, branche master
   branch: master
-  # ⚠️ PLACEHOLDER — URL du Worker Cloudflare « Sveltia CMS Authenticator » (§8.3).
-  # Remplacer <sous-domaine> par le sous-domaine réel du Worker déployé
-  # (cf. README-SVELTIA.md, étape 1) AVANT la mise en service.
-  base_url: https://sveltia-cms-auth.<sous-domaine>.workers.dev
+  # Worker Cloudflare « Sveltia CMS Authenticator » (§8.3).
+  base_url: https://sveltia-cms-auth.koulenga.workers.dev
   # Dépôt PUBLIC → scope minimal (§8.3). Dépôt privé → retirer (scope repo par défaut).
   auth_scope: public_repo
   # Non-techniciens : connexion OAuth uniquement, pas de jetons personnels (§8.7) :
   auth_methods: [oauth]
 
-site_url: https://koulenga.com
+site_url: https://dev.koulenga.com
 
 # ── Médias ────────────────────────────────────────────────────────────────
 # Dossier global (bibliothèque d'actifs) pour les fichiers hors pages :

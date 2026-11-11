@@ -80,7 +80,7 @@
     });
     /* Escape ferme le menu où que soit le focus (§6.4) */
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { setMenu(false); }
+      if (e.key === 'Escape' && menuIsOpen()) { setMenu(false); }
     });
   }
 

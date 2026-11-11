@@ -1,10 +1,10 @@
 # =============================================================================
-# Hugo — site de l'Association Koulenga (koulenga.com)
+# Hugo — préproduction du site de l'Association Koulenga (dev.koulenga.com)
 # Configuration corrigée du plan v2 (§9) : anomalies C1–C5 intégrées, chaque point
 # « vérifié » l'a été par builds réels sous Hugo v0.169.0+extended.
 # =============================================================================
 
-baseURL = "https://koulenga.com/"
+baseURL = "https://dev.koulenga.com/"
 title = "Association Koulenga"           # corrige le bug « | Grav » de production (§2.1)
 theme = "koulenga"
 defaultContentLanguage = "fr"

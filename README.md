@@ -1,4 +1,4 @@
-# Site de l'Association Koulenga — koulenga.com
+# Site de l'Association Koulenga — dev.koulenga.com
 
 Site statique [Hugo](https://gohugo.io/) de l'association Koulenga, migré depuis Grav
 conformément au **plan de migration v2** (`plan-migration-koulenga-grav-vers-hugo.md`,
@@ -64,6 +64,7 @@ fixe/transparent, sticky footer, menu burger mobile plein écran.
 
 ## Édition (bénévoles)
 
-Back-office Sveltia CMS sur **`/admin/`** (connexion GitHub) — collections,
-workflow brouillon → revue → publication : voir `static/admin/README-SVELTIA.md`
-et la section 8 du plan. Les éditeurs ne touchent jamais à `themes/` ni à la CI.
+Back-office Sveltia CMS sur **`https://dev.koulenga.com/admin/`** (connexion GitHub) —
+collections, workflow brouillon → revue → publication : voir
+`static/admin/README-SVELTIA.md` et la section 8 du plan. Les éditeurs ne touchent
+jamais à `themes/` ni à la CI.

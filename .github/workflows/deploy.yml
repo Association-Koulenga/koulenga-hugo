@@ -5,7 +5,7 @@
 # 02/11/2026 — actions/checkout@v7, configure-pages@v6,
 # upload-pages-artifact@v5, deploy-pages@v5, tarballs épinglés).
 # Plan de migration v2 (§9.4, §10.3-A, §10.4) : Hugo extended **0.169.0 épinglé**
-# (A23/R17), Dart Sass épinglé, `--gc --minify --printPathWarnings`,
+# (A23/R17), `--gc --minify --printPathWarnings`,
 # **copie de public/fr/404.html → public/404.html** (A6/R12 : GitHub Pages
 # attend la 404 à la racine), QA programmatique bloquante (A28), puis
 # configure-pages → upload-pages-artifact → deploy-pages.
@@ -15,8 +15,6 @@ name: Build, QA and deploy to GitHub Pages
 # ── Outils épinglés (build reproductible, R17) ──────────────────────────────
 env:
   HUGO_VERSION: "0.169.0"      # extended — même version que l'intégration locale
-  DART_SASS_VERSION: "1.106.1" # épinglé (§9.4) — aucun SCSS compilé aujourd'hui,
-                               # requis dès la phase 7 (recompilation SCSS, §6.2)
   TZ: "Europe/Paris"
 
 on:
@@ -27,8 +25,6 @@ on:
 
 permissions:
   contents: read
-  pages: write                 # déploiement GitHub Pages
-  id-token: write               # OIDC → actions/deploy-pages
 
 concurrency:
   group: "pages"
@@ -53,37 +49,20 @@ jobs:
         id: pages
         uses: actions/configure-pages@v6
 
-      - name: Create a local tools directory
-        run: mkdir -p "${HOME}/.local"
-
-      # Dart Sass épinglé par tarball (modèle officiel). Étape conservée même si
-      # le build actuel ne compile pas de SCSS : elle garantit que la phase 7 du
-      # plan (Hugo pipes, toCSS) ne casse pas la CI le jour où les feuilles
-      # passeront en Dart Sass.
-      - name: Install Dart Sass
-        run: |
-          echo "Installing Dart Sass ${DART_SASS_VERSION}..."
-          curl -sfL --output-dir "${{ runner.temp }}" -O \
-            "https://github.com/sass/dart-sass/releases/download/${DART_SASS_VERSION}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
-          tar -C "${HOME}/.local" -xf \
-            "${{ runner.temp }}/dart-sass-${DART_SASS_VERSION}-linux-x64.tar.gz"
-          echo "${HOME}/.local/dart-sass" >> "${GITHUB_PATH}"
-
-      # Hugo EXTENDED 0.169.0 épinglé (toCSS/Dart Sass, §9.1) — tarball direct,
+      # Hugo EXTENDED 0.169.0 épinglé — tarball direct,
       # pas de actions/setup-hugo : c'est le modèle de la doc officielle.
       - name: Install Hugo
         run: |
           echo "Installing Hugo ${HUGO_VERSION} (extended)..."
           curl -sfL --output-dir "${{ runner.temp }}" -O \
             "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
-          mkdir "${HOME}/.local/hugo"
+          mkdir -p "${HOME}/.local/hugo"
           tar -C "${HOME}/.local/hugo" -xf \
             "${{ runner.temp }}/hugo_extended_${HUGO_VERSION}_linux-amd64.tar.gz"
           echo "${HOME}/.local/hugo" >> "${GITHUB_PATH}"
 
       - name: Log tool versions
         run: |
-          command -v sass  &> /dev/null && echo "Dart Sass: $(sass --version)"  || echo "Dart Sass: not installed"
           command -v hugo  &> /dev/null && echo "Hugo: $(hugo version)"          || echo "Hugo: not installed"
 
       - name: Configure Git

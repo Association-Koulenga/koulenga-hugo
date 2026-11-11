@@ -2,6 +2,9 @@
 
 **Date :** 02/11/2026 · **Hugo :** v0.169.0+extended (`/opt/data/tools/hugo`, linux/arm64) · **Référentiel :** plan de migration v2 (§9 configuration, §10.2 checklist QA, §13 checklist de fin) · **Agent :** intégration & QA.
 
+La configuration du domaine a depuis été basculée sur `dev.koulenga.com` ; les
+vérifications de ce rapport n'ont pas été rejouées après ce changement.
+
 ---
 
 ## 1. Résultat global
@@ -34,7 +37,7 @@ Le front matter des pages portait l'arbre complet **avec enfants** (`identifier`
 - **`/fr/association/` exclu du sitemap** (`sitemap: disable: true` en front matter) : c'est une page de redirection noindex — elle n'a pas à être proposée aux moteurs (le `fr/sitemap.xml` passe de 13 à **12 `<loc>`** : home + 11 pages).
 - **`partials/images-block.html`** : émission de `width`/`height` sur les `<img>` (les 4 images du bloc « Cross » de la home n'avaient que `loading`/`decoding`) → 0 image interne sans dimensions.
 - **`partials/mobile-menu.html`** : `loading="lazy"` sur le logo du menu overlay. Le logo d'en-tête reste **volontairement eager** (above-the-fold, LCP).
-- **`static/CNAME`** : `koulenga.com` ajouté (domaine personnalisé GitHub Pages, §10.3-A — à activer avec « Enforce HTTPS » dans les réglages Pages).
+- **`static/CNAME`** : `dev.koulenga.com` configuré pour la préproduction GitHub Pages (§10.3-A).
 
 ## 3. Vérifications QA (script : `scripts/qa_checks.py`, résultats : `qa_results.json`)
 
@@ -53,7 +56,7 @@ Le front matter des pages portait l'arbre complet **avec enfants** (`identifier`
 | 4 | Images internes : `width` + `height` (anti-CLS) | OK — 0 anomalie |
 | 5 | `sitemap.xml` racine = sitemapindex → `/fr/sitemap.xml` | OK |
 | 5 | `fr/sitemap.xml` : home + 11 pages (12 `<loc>`), 0 page de redirection | OK |
-| 5 | `robots.txt` avec `Sitemap: https://koulenga.com/sitemap.xml` | OK |
+| 5 | `robots.txt` avec `Sitemap: https://dev.koulenga.com/sitemap.xml` | OK |
 | 5 | RSS `/fr/index.xml` : 11 items (pages, hors home/redirections) | OK |
 | 5 | 404 à la racine (`public/404.html` copiée de `public/fr/404.html`) + contenu réel | OK |
 | 6 | JSON-LD home : `application/ld+json`, JSON valide, type `NGO` | OK |
@@ -64,9 +67,17 @@ Le front matter des pages portait l'arbre complet **avec enfants** (`identifier`
 
 ## 4. CI — `.github/workflows/deploy.yml` (créé)
 
-Workflow **GitHub Pages** conforme au modèle officiel actuel de la doc Hugo (gohugo.io « Deploy to GitHub Pages », consultée le 02/11/2026) :
-`actions/checkout@v7` (submodules, full history) → `actions/configure-pages@v6` → **Hugo extended 0.169.0 épinglé par tarball** + **Dart Sass 1.106.1 épinglé** → build `--gc --minify --printPathWarnings --printI18nWarnings --logLevel info --baseURL <pages>` → **copie `public/fr/404.html` → `public/404.html`** → **QA bloquante** (`python3 scripts/qa_checks.py`, exit 1 ⇒ pas de déploiement) → `upload-pages-artifact@v5` → job `deploy` avec `actions/deploy-pages@v5`.
-`permissions: contents: read, pages: write, id-token: write` · `concurrency: pages` sans annulation · **aucun `continue-on-error`** · déclenché sur `push` → `master` + manuel.
+Workflow **GitHub Pages** conforme au modèle officiel de la doc Hugo
+(gohugo.io « Deploy to GitHub Pages », consultée le 02/11/2026) :
+`actions/checkout@v7` (submodules, full history) → `actions/configure-pages@v6` → **Hugo extended 0.169.0
+épinglé par tarball** → build `--gc --minify --printPathWarnings --printI18nWarnings --logLevel info
+--baseURL <pages>` → **copie `public/fr/404.html` → `public/404.html`** → **QA bloquante**
+(`python3 scripts/qa_checks.py`, exit 1 ⇒ pas de déploiement) → `upload-pages-artifact@v5` → job
+`deploy` avec `actions/deploy-pages@v5`.
+
+`contents: read` pour le workflow/build ; `pages: write` et `id-token: write` limités au job `deploy` ·
+`concurrency: pages` sans annulation · **aucun `continue-on-error`** · déclenché sur `push` → `master`
+et `workflow_dispatch`.
 
 ## 5. Restes & risques (à traiter avant/après bascule)
 
@@ -74,10 +85,10 @@ Workflow **GitHub Pages** conforme au modèle officiel actuel de la doc Hugo (go
 |---|---|---|
 | R1 | `og:image` 1200×630 absente (`params.ogImage` resté en commentaire dans `hugo.toml`) — obligatoire avant bascule | A13 |
 | R2 | Contraste charte non corrigé (`#bf5f2c` 4,30:1 et `#f7fb05`/`#996a51` 4,14:1 échouent AA texte normal) ; corrections ou usage « large text » assumé à décider | R13/§6.4 |
-| R3 | Placeholder Sveltia : `backend.base_url` (`sveltia-cms-auth.<sous-domaine>.workers.dev`) + décision galerie (`sections/photos`) à trancher | §8 |
+| R3 | OAuth Sveltia à valider de bout en bout ; décision galerie (`sections/photos`) à trancher | §8 |
 | R4 | `/` → `/fr/` est un meta-refresh Hugo (pas une 301) ; `/fr/association`, `/fr/actions` : meta-refresh/alias (pas des 301 serveur) — acceptable sur GitHub Pages, 301 exactes recommandées si nginx | §5.2 |
 | R5 | Images non optimisées (~67 Mo, noms avec espaces/accents conservés volontairement) ; phase 7 SCSS/Dart Sass + WebP home à faire | R6/§6.2 |
 | R6 | Non automatisable ici : `htmltest` (règle `_blank`), validation W3C, captures desktop/mobile 375 px, relecture humaine des 13 textes, soumission Search Console | §10.2 |
-| R7 | GitHub Pages : paramétrage à faire côté GitHub (Source = GitHub Actions, domaine `koulenga.com` via `CNAME` déjà posé, « Enforce HTTPS ») | §10.3-A |
+| R7 | GitHub Pages : paramétrage à faire côté GitHub (Source = GitHub Actions, domaine `dev.koulenga.com` via `CNAME`, « Enforce HTTPS ») | §10.3-A |
 
 *Réexécutable : `cd koulenga-hugo && hugo --gc --minify --printPathWarnings --printI18nWarnings --logLevel info && cp public/fr/404.html public/404.html && python3 scripts/qa_checks.py` (exit 0 attendu ; en CI via `KOULENGA_PUBLIC`/`KOULENGA_BASE`).*

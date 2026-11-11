@@ -16,9 +16,9 @@ from urllib.parse import unquote
 PUB = Path(os.environ.get("KOULENGA_PUBLIC", "/opt/data/koulenga-hugo/public"))
 RESULTS_PATH = os.environ.get(
     "KOULENGA_QA_RESULTS", "/opt/data/koulenga-qa/qa_results.json")
-# Base des URLs absolues : koulenga.com en local, l'URL Pages en CI
+# Base des URLs absolues : dev.koulenga.com en local, l'URL Pages en CI
 # (--baseURL de l'étape Build du workflow).
-BASE = os.environ.get("KOULENGA_BASE", "https://koulenga.com").rstrip("/")
+BASE = os.environ.get("KOULENGA_BASE", "https://dev.koulenga.com").rstrip("/")
 RESULTS = {"ok": 0, "fail": 0, "checks": []}
 FAILED = []
 
