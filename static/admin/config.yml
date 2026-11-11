@@ -73,45 +73,49 @@ collections:
             name: title
             widget: string
             required: true
-          - label: Texte du bandeau (appel aux dons)
-            name: params.hero_text
-            widget: markdown
-            required: false
-            hint: Texte superposé au bandeau plein écran, avec le lien HelloAsso.
-          - label: Images du bandeau (1re = image de fond)
-            name: params.banner_images
-            widget: list
-            required: false
-            summary: '{{fields.image}}'
+          - label: Paramètres
+            name: params
+            widget: object
             fields:
-              - label: Image
-                name: image
-                widget: object
+              - label: Texte du bandeau (appel aux dons)
+                name: hero_text
+                widget: markdown
+                required: false
+                hint: Texte superposé au bandeau plein écran, avec le lien HelloAsso.
+              - label: Images du bandeau (1re = image de fond)
+                name: banner_images
+                widget: list
+                required: false
+                summary: '{{fields.image}}'
                 fields:
-                  - { name: src, widget: image, required: true }
-                  - { name: alt, widget: string, required: false, hint: Description pour l'accessibilité }
-          - label: Bloc photos « Cross »
-            name: params.photo_images
-            widget: list
-            required: false
-            fields:
-              - label: Image
-                name: image
-                widget: object
+                  - label: Image
+                    name: image
+                    widget: object
+                    fields:
+                      - { name: src, widget: image, required: true }
+                      - { name: alt, widget: string, required: false, hint: Description pour l'accessibilité }
+              - label: Bloc photos « Cross »
+                name: photo_images
+                widget: list
+                required: false
                 fields:
-                  - { name: src, widget: image, required: true }
-                  - { name: alt, widget: string, required: false }
-          - label: Alignement du bloc photos
-            name: params.image_align
-            widget: select
-            options: [left, right, center]
-            default: right
-            required: false
-          - label: Classes d'affichage (ne pas modifier)
-            name: params.body_classes
-            widget: string
-            default: 'modular header-image fullwidth'
-            required: false
+                  - label: Image
+                    name: image
+                    widget: object
+                    fields:
+                      - { name: src, widget: image, required: true }
+                      - { name: alt, widget: string, required: false }
+              - label: Alignement du bloc photos
+                name: image_align
+                widget: select
+                options: [left, right, center]
+                default: right
+                required: false
+              - label: Classes d'affichage (ne pas modifier)
+                name: body_classes
+                widget: string
+                default: 'modular header-image fullwidth'
+                required: false
       - name: actualites
         label: Accueil — Actualités
         # Page headless en page bundle (aligné sur la structure réelle du dépôt) :
@@ -146,7 +150,11 @@ collections:
       #   fields:
       #     - { label: Titre, name: title, widget: string, required: true, default: Cross }
       #     - { label: Date de mise à jour, name: date, widget: datetime, type: date, required: false }
-      #     - { label: Alignement des images, name: params.image_align, widget: select, options: [left, right, center], default: right, required: false }
+      #     - label: Paramètres
+      #       name: params
+      #       widget: object
+      #       fields:
+      #         - { label: Alignement des images, name: image_align, widget: select, options: [left, right, center], default: right, required: false }
       #     - { label: Contenu, name: body, widget: markdown, required: false }
 
   # 2. LE VILLAGE & LE PAYS ────────────────────────────────────────────────
@@ -178,11 +186,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
@@ -212,11 +224,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
@@ -251,11 +267,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Anciennes adresses conservées (ne pas modifier)
             name: aliases
             widget: list
@@ -291,11 +311,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
@@ -325,11 +349,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
@@ -359,11 +387,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
@@ -399,11 +431,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Ancienne adresse /fr/actions/ (ne pas modifier)
             name: aliases
             widget: list
@@ -438,11 +474,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
@@ -472,11 +512,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
@@ -512,11 +556,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des numéros se règle en réordonnant les listes d'images.
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des numéros se règle en réordonnant les listes d'images.
           - label: Contenu
             name: body
             widget: markdown
@@ -546,11 +594,15 @@ collections:
             widget: number
             required: false
             hint: Laisser vide — les menus sont gérés dans hugo.toml (§8.6).
-          - label: Ordre des médias (hérité de Grav — ne pas modifier)
-            name: params.media_order
-            widget: string
-            required: false
-            hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
+          - label: Paramètres
+            name: params
+            widget: object
+            fields:
+              - label: Ordre des médias (hérité de Grav — ne pas modifier)
+                name: media_order
+                widget: string
+                required: false
+                hint: L'ordre des images se règle en réordonnant les listes d'images (glisser-déposer).
           - label: Contenu
             name: body
             widget: markdown
