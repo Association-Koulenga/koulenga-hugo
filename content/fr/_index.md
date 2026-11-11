@@ -11,6 +11,7 @@ menu:
 params:
   body_classes: "modular header-image fullwidth"
   image_align: "right"
+  hero_background: false
   media_order: "koulenga.svgz.png,COMPTE RENDU AG 2023.pdf,2022-12-17-10-20-18 6.jpg,DSCN0567 - Copie.JPG"
   hero_text: |
     ![2026 3](2026%203.jpeg "2026 3")

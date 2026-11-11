@@ -1,11 +1,12 @@
 {{- /* hero-image.html — résolution de l'image de fond du hero (§4.4/A31 du plan v2).
-       Un SEUL mécanisme, dans cet ordre :
+       `hero_background: false` désactive l'image ; sinon, un seul mécanisme :
          1. params.hero_image      : nom de la ressource image du bundle ;
          2. params.banner_images  : 1ʳᵉ entrée de la liste (src + alt) — format des
                                      listes d'images du CMS (objet image.src/image.alt),
                                      accepté aussi à plat (src/alt) ou chemin seul ;
          3. 1ʳᵉ image du page bundle (fallback, §2.6.2 : garder la 1ʳᵉ image utile).
        Rend la ressource (image), ou "" si aucune image. */ -}}
+{{- if eq .Params.hero_background false }}{{ return "" }}{{ end -}}
 {{- $img := "" -}}
 {{- with .Params.hero_image }}{{ with $.Resources.GetMatch . }}{{ $img = . }}{{ end }}{{ end -}}
 {{- if not $img -}}
