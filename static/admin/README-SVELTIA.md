@@ -2,7 +2,7 @@
 
 > Préparation issue du **plan de migration v2** (02/11/2026), §8 et annexes C à F.
 > Ce dossier (`static/admin/`) est copié tel quel par Hugo dans `public/admin/` et
-> servi sur **`https://dev.koulenga.com/admin/`**.
+> servi sur **`https://koulenga.com/admin/`**.
 
 ## Fichiers de ce dossier
 
@@ -23,12 +23,13 @@ fois le site déployé : il ne contient volontairement que `repo`, `branch`,
 
 ## URLs configurées
 
-Le site de préproduction et le Worker d'authentification sont configurés dans
+Le site et le Worker d'authentification sont configurés dans
 `config.yml` :
 
 ```yaml
-site_url: https://dev.koulenga.com
-base_url: https://sveltia-cms-auth.koulenga.workers.dev
+site_url: https://koulenga.com
+backend:
+  base_url: https://sveltia-cms-auth.koulenga.workers.dev
 ```
 
 ## Étapes de mise en service
@@ -46,7 +47,7 @@ base_url: https://sveltia-cms-auth.koulenga.workers.dev
 (**pas** depuis un compte personnel, §8.5) :
 
 - Application name : `Koulenga — CMS`
-- Homepage URL : `https://dev.koulenga.com`
+- Homepage URL : `https://koulenga.com`
 - **Authorization callback URL :
   `https://sveltia-cms-auth.koulenga.workers.dev/callback`**
 - Noter le **Client ID** ; « Generate a new client secret » → copier le
@@ -64,11 +65,14 @@ des scopes) → callback du Worker (`/callback`) → retour navigateur sur
 |---|---|---|---|
 | Worker `sveltia-cms-auth` | `GITHUB_CLIENT_ID` | Client ID de l'OAuth app (org Association-Koulenga) | Non (identifiant public), mais à garder dans le Worker |
 | Worker `sveltia-cms-auth` | `GITHUB_CLIENT_SECRET` | Client Secret de l'OAuth app | **OUI — variable chiffrée (« Encrypt ») ; JAMAIS dans le dépôt** |
-| Worker `sveltia-cms-auth` | `ALLOWED_DOMAINS` | `dev.koulenga.com` | Non — limite les connexions au domaine de préproduction |
+| Worker `sveltia-cms-auth` | `ALLOWED_DOMAINS` | `koulenga.com` | Non |
 | Worker `sveltia-cms-auth` | `GITHUB_HOSTNAME` | *(vide — github.com public ; ne remplir qu'en GitHub Enterprise)* | — |
 | Worker `sveltia-cms-auth` | `GITHUB_ALLOW_WORKFLOW_SCOPE` | *(absent/false — ne pas activer, §8.3)* | — |
 | GitHub Actions | *(aucune variable nécessaire)* | le `GITHUB_TOKEN` natif suffit pour le build + Pages | — |
 | `config.yml` (public) | `backend.base_url` | URL publique du Worker | — |
+
+Pendant la bascule, utiliser `dev.koulenga.com,koulenga.com` dans `ALLOWED_DOMAINS`
+si la connexion doit fonctionner sur les deux domaines.
 
 ### 4. Vérifier les URL configurées
 
@@ -90,9 +94,9 @@ modification d'une page, upload d'une image (vérifier qu'elle atterrit dans le
 dossier de la page — colocalisée), upload d'un PDF. Valider aussi le schéma
 JSON dans VS Code (lien `yaml-language-server` en tête de `config.yml`).
 
-### 7. Tester la connexion OAuth de bout en bout (préprod)
+### 7. Tester la connexion OAuth de bout en bout
 
-Déployer sur la préprod (`dev.koulenga.com`), se connecter avec un compte
+Déployer sur `koulenga.com`, se connecter avec un compte
 ayant un accès en **écriture** au dépôt (les comptes en lecture seule sont
 refusés à la connexion), et dérouler la boucle complète :
 brouillon → revue → publier → build GitHub Actions → en ligne.
@@ -104,17 +108,19 @@ brouillon → revue → publier → build GitHub Actions → en ligne.
 - [ ] Créer l'**OAuth app GitHub sous l'org** avec le callback
   `https://sveltia-cms-auth.koulenga.workers.dev/callback` ; copier Client ID / Secret.
 - [ ] Renseigner les variables du Worker (tableau ci-dessus) avec le Secret **chiffré**.
-- [ ] Vérifier `static/admin/index.html` (version CDN épinglée à jour) et `static/admin/config.yml` ; valider le schéma JSON et tester la **connexion OAuth de bout en bout** sur la préprod.
+- [ ] Vérifier la version CDN épinglée dans `static/admin/index.html` et valider
+  le schéma de `static/admin/config.yml`.
+- [ ] Tester la **connexion OAuth de bout en bout** sur `koulenga.com`.
 - [ ] Tester en local (workflow local : `hugo server` → `/admin/`) la modification d'une page, l'upload d'une image (colocalisée) et d'un PDF.
 - [ ] Configurer l'équipe GitHub `éditeurs-site` (Write) ; inviter les bénévoles ; activer les restrictions d'apps OAuth de l'org.
 - [ ] Protéger `master` (PR obligatoires) — compatible avec le workflow éditorial (§8.8).
-- [ ] Vérifier la boucle complète : brouillon → revue → publier → build Actions → en ligne sur `dev.koulenga.com`.
+- [ ] Vérifier la boucle complète : brouillon → revue → publier → build Actions → en ligne sur `koulenga.com`.
 - [ ] Rédiger/imprimer le guide d'une page (§8.8) ; animer la session de formation d'1 h ; prévoir l'accompagnement 2–3 semaines.
 - [ ] Mettre à jour le README du dépôt : URL `/admin/`, rôles, procédure de mise à jour de la version du CMS.
 
 ## Recette des éditeurs (rappel, §8.7)
 
-1. Aller sur `https://dev.koulenga.com/admin/` → « Se connecter avec GitHub » → autoriser (une fois).
+1. Aller sur `https://koulenga.com/admin/` → « Se connecter avec GitHub » → autoriser (une fois).
 2. Choisir la page dans la liste (ex. *L'association → Adhésions & Dons*).
 3. Modifier le texte ; téléverser/choisir une image dans le champ prévu ; renseigner le texte alternatif si demandé.
 4. « Enregistrer » → la modification est en **Brouillon** ; « Envoyer en revue » quand c'est prêt.

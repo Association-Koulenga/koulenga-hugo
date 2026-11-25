@@ -1,4 +1,4 @@
-# Site de l'Association Koulenga — dev.koulenga.com
+# Site de l'Association Koulenga — koulenga.com
 
 Site statique [Hugo](https://gohugo.io/) de l'association Koulenga, migré depuis Grav
 conformément au **plan de migration v2** (`plan-migration-koulenga-grav-vers-hugo.md`,
@@ -37,6 +37,10 @@ Sortie attendue : ~30–40 pages HTML + ~140 médias, build < 1 s sans pipeline 
 La 404 est générée sous `/fr/404.html` (`defaultContentLanguageInSubdir`, vérifié) :
 la CI copie `public/fr/404.html` → `public/404.html` pour GitHub Pages (A6).
 
+Le déploiement GitHub Actions utilise l'URL définie dans **Settings → Pages** du
+dépôt. Choisir **GitHub Actions** comme source et `koulenga.com` comme domaine
+personnalisé, puis activer **Enforce HTTPS** quand le certificat est prêt.
+
 ## Thème `koulenga`
 
 Portage du thème Grav `koulenga` (surcouche de **Quark 2.1.6** / **Spectre.css**,
@@ -64,7 +68,7 @@ fixe/transparent, sticky footer, menu burger mobile plein écran.
 
 ## Édition (bénévoles)
 
-Back-office Sveltia CMS sur **`https://dev.koulenga.com/admin/`** (connexion GitHub) —
+Back-office Sveltia CMS sur **`https://koulenga.com/admin/`** (connexion GitHub) —
 collections, workflow brouillon → revue → publication : voir
 `static/admin/README-SVELTIA.md` et la section 8 du plan. Les éditeurs ne touchent
 jamais à `themes/` ni à la CI.

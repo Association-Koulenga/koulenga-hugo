@@ -3,7 +3,7 @@
 # Sveltia CMS — configuration du back-office du site Hugo Koulenga
 # Source : plan de migration v2 (02/11/2026), §8 + annexe D.
 #
-# ⚠️ CE FICHIER EST PUBLIC (servi sur https://dev.koulenga.com/admin/config.yml) :
+# ⚠️ CE FICHIER EST PUBLIC (servi sur https://koulenga.com/admin/config.yml) :
 #    AUCUN SECRET ICI. Les secrets (Client Secret GitHub) vivent UNIQUEMENT
 #    en variables chiffrées du Worker Cloudflare — cf. README-SVELTIA.md et
 #    §8.4 du plan.
@@ -28,7 +28,7 @@ backend:
   # Non-techniciens : connexion OAuth uniquement, pas de jetons personnels (§8.7) :
   auth_methods: [oauth]
 
-site_url: https://dev.koulenga.com
+site_url: https://koulenga.com
 
 # ── Médias ────────────────────────────────────────────────────────────────
 # Dossier global (bibliothèque d'actifs) pour les fichiers hors pages :
